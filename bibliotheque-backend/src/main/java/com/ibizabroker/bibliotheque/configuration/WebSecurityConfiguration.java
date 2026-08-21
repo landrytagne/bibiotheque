@@ -44,6 +44,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/authenticate", "/borrow/**").permitAll()
                 .antMatchers("/admin/books/**").permitAll()
                 .antMatchers("/admin/**").permitAll()
+                .antMatchers("/api/reservations/**").permitAll()
+                .antMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                 .antMatchers(HttpHeaders.ALLOW).permitAll()
                 .anyRequest().authenticated()
                 .and()
