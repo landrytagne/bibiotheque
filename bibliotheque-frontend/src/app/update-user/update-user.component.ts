@@ -12,6 +12,11 @@ export class UpdateUserComponent implements OnInit {
 
   userId: number;
   user: Users = new Users();
+  selectedRole: string = 'User';
+  roleOptions = ['User', 'Admin'];
+  errorMessage: string | null = null;
+  submitted = false;
+
   constructor(private usersService: UsersService,
     private route: ActivatedRoute,
     private router: Router) { }
@@ -20,14 +25,27 @@ export class UpdateUserComponent implements OnInit {
     this.userId = this.route.snapshot.params['userId'];
     this.usersService.getUserById(this.userId).subscribe(data => {
       this.user = data;
-    })
+      if (this.user.role && this.user.role.length > 0) {
+        this.selectedRole = this.user.role[0].roleName;
+      }
+    });
   }
 
   onSubmit() {
-    this.usersService.updateUser(this.userId, this.user).subscribe( data =>{
+    if (this.selectedRole) {
+      this.user.role = [{ roleName: this.selectedRole }];
+    } else {
+      this.user.role = [];
+    }
+    this.submitted = true;
+    this.errorMessage = null;
+    this.usersService.updateUser(this.userId, this.user).subscribe(data => {
         this.goToUsersList();
     },
-    error => console.log(error));
+    error => {
+      this.submitted = false;
+      this.errorMessage = 'Impossible de modifier l\'utilisateur.';
+    });
   }
 
   goToUsersList() {

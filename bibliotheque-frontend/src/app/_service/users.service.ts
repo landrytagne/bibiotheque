@@ -35,15 +35,12 @@ export class UsersService {
         for (let j = 0; j < allowedRoles.length; j++) {
           if (userRoles[i].roleName === allowedRoles[j]) {
             isMatch = true;
-            return isMatch;
-          } else {
-            return isMatch;
           }
         }
       }
     }
 
-    return false;
+    return isMatch;
   }
 
   getUsersList(): Observable<Users[]> {

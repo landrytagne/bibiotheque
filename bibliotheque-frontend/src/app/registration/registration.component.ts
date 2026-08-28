@@ -11,26 +11,47 @@ import { UsersService } from '../_service/users.service';
 export class RegistrationComponent implements OnInit {
 
   user: Users = new Users();
+  selectedRole: string = 'User';
+  roleOptions = ['User', 'Admin'];
+  errorMessage: string | null = null;
+  submitted = false;
+
   constructor(private usersService: UsersService,
     private router: Router) { }
 
   ngOnInit(): void {
   }
 
+  private buildRole() {
+    if (this.selectedRole) {
+      this.user.role = [{ roleName: this.selectedRole }];
+    } else {
+      this.user.role = [];
+    }
+  }
+
   saveUser() {
+    this.buildRole();
+    this.submitted = true;
+    this.errorMessage = null;
     this.usersService.createUser(this.user).subscribe(data => {
-      console.log(data);
       this.goToUsersList();
     },
-    error => console.log(error));
+    error => {
+      this.submitted = false;
+      this.errorMessage = 'Impossible de créer l\'utilisateur. Vérifiez que tous les champs sont renseignés.';
+    });
   }
 
   goToUsersList() {
     this.router.navigate(['/users']);
   }
 
+  formValid(): boolean {
+    return !!this.user.name && !!this.user.username && !!this.user.password && !!this.selectedRole;
+  }
+
   onSubmit() {
-    console.log(this.user);
     this.saveUser();
   }
 
