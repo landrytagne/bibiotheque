@@ -75,7 +75,7 @@ public class AdminController {
             if (role.getRoleName() == null || role.getRoleName().trim().isEmpty()) {
                 continue;
             }
-            Role rolesExistant = roleRepository.findByRoleName(role.getRoleName().trim())
+            Role rolesExistant = roleRepository.findFirstByRoleNameOrderByRoleIdAsc(role.getRoleName().trim())
                     .orElseGet(() -> {
                         Role nouveauRole = new Role();
                         nouveauRole.setRoleName(role.getRoleName().trim());
