@@ -1,0 +1,50 @@
+<div class="container">
+    <h2>Liste des réservations</h2>
+
+    <div class="form-group" style="margin-bottom: 15px">
+        <label> Filtre par statut </label>
+        <select class="form-control" [(ngModel)]="statutSelectionne" (ngModelChange)="changerStatut($event)" name="statutFiltre">
+            <option *ngFor="let s of statuts" [ngValue]="s">{{ s }}</option>
+        </select>
+    </div>
+
+    <div *ngIf="chargement" class="alert alert-info" role="alert">
+        Chargement des réservations...
+    </div>
+
+    <div *ngIf="!chargement && erreur" class="alert alert-danger" role="alert">
+        {{ erreur }}
+        <button class="btn btn-outline-danger btn-sm" style="margin-left: 10px" (click)="reessayer.emit()">Réessayer</button>
+    </div>
+
+    <div *ngIf="!chargement && !erreur && reservations.length === 0" class="alert alert-warning" role="alert">
+        Aucune réservation
+    </div>
+
+    <table *ngIf="!chargement && !erreur && reservations.length > 0" class="table table-success table-striped">
+        <thead>
+            <tr>
+                <th> Titre du livre </th>
+                <th> Nom de l'adhérent </th>
+                <th> Statut </th>
+                <th> Date de réservation </th>
+                <th> Date d'expiration </th>
+                <th> Action </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let r of reservations">
+                <td> {{ r.livreNom }} </td>
+                <td> {{ r.adherentNom }} </td>
+                <td> {{ r.statut }} </td>
+                <td> {{ r.dateReservation }} </td>
+                <td> {{ r.dateExpiration }} </td>
+                <td>
+                    <button *ngIf="boutonAnnulationVisible(r)" (click)="demanderAnnulation(r.id)" class="btn btn-danger">
+                        Annuler
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

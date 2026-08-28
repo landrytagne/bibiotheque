@@ -1,0 +1,23 @@
+<h2>Gestion des réservations</h2>
+
+<div *ngIf="estAdmin">
+    <app-reservation-form
+        [livres]="livres"
+        [adherents]="adherents"
+        (creer)="creer($event)">
+    </app-reservation-form>
+</div>
+
+<div *ngIf="!estAdmin" class="alert alert-info" role="alert">
+    Vous consultez vos réservations.
+</div>
+
+<app-reservation-list
+    [reservations]="reservations"
+    [chargement]="chargement"
+    [erreur]="erreurListe"
+    [statutSelectionne]="statutSelectionne"
+    (filtrer)="filtrer($event)"
+    (annuler)="annuler($event)"
+    (reessayer)="reessayer()">
+</app-reservation-list>

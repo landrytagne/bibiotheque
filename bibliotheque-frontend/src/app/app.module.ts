@@ -24,6 +24,10 @@ import { AuthInterceptor } from './_auth/auth.interceptor';
 import { ForbiddenComponent } from './forbidden/forbidden.component';
 import { BorrowBookComponent } from './borrow-book/borrow-book.component';
 import { ReturnBookComponent } from './return-book/return-book.component';
+import { ReservationPageComponent } from './reservation-page/reservation-page.component';
+import { ReservationListComponent } from './reservation-list/reservation-list.component';
+import { ReservationFormComponent } from './reservation-form/reservation-form.component';
+import { ReservationService } from './_service/reservation.service';
 
 @NgModule({
   declarations: [
@@ -43,6 +47,9 @@ import { ReturnBookComponent } from './return-book/return-book.component';
     ForbiddenComponent,
     BorrowBookComponent,
     ReturnBookComponent,
+    ReservationPageComponent,
+    ReservationListComponent,
+    ReservationFormComponent,
   ],
   imports: [
     BrowserModule,
@@ -59,7 +66,8 @@ import { ReturnBookComponent } from './return-book/return-book.component';
       multi: true
     },
     UsersService,
-    BooksService
+    BooksService,
+    ReservationService
    ],
   bootstrap: [AppComponent]
 })

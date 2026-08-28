@@ -1,0 +1,33 @@
+<div class="container">
+    <h3 class="text-center">Nouvelle réservation</h3>
+
+    <div *ngIf="messageErreur" class="alert alert-danger" role="alert">
+        {{ messageErreur }}
+    </div>
+
+    <form autocomplete="off">
+        <div class="form-group">
+            <label style="margin-bottom: 10px"> Livre </label>
+            <select class="form-control" style="margin-bottom: 10px" [(ngModel)]="requete.livreId" name="livreId">
+                <option [ngValue]="null" disabled>Choisir un livre</option>
+                <option *ngFor="let livre of livres" [ngValue]="livre.bookId">
+                    {{ livre.bookName }} ({{ livre.bookAuthor }})
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label style="margin-bottom: 10px"> Adhérent </label>
+            <select class="form-control" style="margin-bottom: 10px" [(ngModel)]="requete.adherentId" name="adherentId">
+                <option [ngValue]="null" disabled>Choisir un adhérent</option>
+                <option *ngFor="let adherent of adherents" [ngValue]="adherent.userId">
+                    {{ adherent.name }}
+                </option>
+            </select>
+        </div>
+
+        <button class="btn btn-success" type="button" (click)="soumettre()" [disabled]="!valide() || enAttente">
+            {{ enAttente ? 'Création en cours...' : 'Réserver' }}
+        </button>
+    </form>
+</div>
