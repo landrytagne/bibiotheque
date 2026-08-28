@@ -17,6 +17,9 @@ public class Books {
     String bookGenre;
     Integer noOfCopies;
 
+    @Column(name = "book_code")
+    private String bookCode;
+
     public void borrowBook() {
         this.noOfCopies--;
     }
