@@ -1,5 +1,6 @@
 package com.ibizabroker.bibliotheque.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -14,7 +15,12 @@ public class Users {
     private Integer userId;
     private String username;
     private String name;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+
+    @Column(name = "user_code")
+    private String userCode;
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "USER_ROLE",
             joinColumns = {
