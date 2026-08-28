@@ -1,0 +1,17 @@
+.genre-badge {
+    background-color: #eef1fa;
+    color: #33415c;
+    font-weight: 500;
+}
+
+.count-available {
+    background-color: #27ae60;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.count-unavailable {
+    background-color: #e74c3c;
+    color: #ffffff;
+    font-weight: 600;
+}

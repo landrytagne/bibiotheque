@@ -1,14 +1,29 @@
-<div class="container col-md-6 offset-mid-3">
-<form autocomplete="off" #loginForm="ngForm" (ngSubmit)="login(loginForm)">
-    <div class="mb-3">
-      <label class="form-label" style="margin-top: 100px;">Username</label>
-      <input type="text" name="username" ngModel class="form-control" id="loginUsername" placeholder="Enter your username">
-      <div id="emailHelp" class="form-text">Username provided by the library admin.</div>
+<div class="login-page">
+    <div class="card login-card">
+        <div class="card-body">
+            <div class="text-center mb-4">
+                <div class="login-icon">📚</div>
+                <h3 class="login-title">Connexion</h3>
+                <p class="text-muted">Accédez à la gestion de la bibliothèque</p>
+            </div>
+
+            <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+                {{ errorMessage }}
+            </div>
+
+            <form autocomplete="off" #loginForm="ngForm" (ngSubmit)="login(loginForm)">
+                <div class="mb-3">
+                    <label class="form-label">Nom d'utilisateur</label>
+                    <input type="text" name="username" ngModel class="form-control" id="loginUsername" placeholder="Votre nom d'utilisateur">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">Mot de passe</label>
+                    <input type="password" name="password" ngModel class="form-control" id="loginPassword" placeholder="Votre mot de passe">
+                </div>
+                <button type="submit" class="btn btn-primary w-100" [disabled]="loading">
+                    {{ loading ? 'Connexion en cours...' : 'Se connecter' }}
+                </button>
+            </form>
+        </div>
     </div>
-    <div class="mb-3">
-      <label class="form-label">Password</label>
-      <input type="password" name="password" ngModel class="form-control" id="loginPassword" placeholder="Enter your password">
-    </div>
-    <input type="submit" value="Login" class="btn btn-primary"/>
-  </form>
 </div>

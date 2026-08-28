@@ -1,0 +1,25 @@
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 180px);
+    padding: 20px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 400px;
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(31, 58, 147, 0.15);
+}
+
+.login-icon {
+    font-size: 3rem;
+    margin-bottom: 8px;
+}
+
+.login-title {
+    color: #2c3e50;
+    font-weight: 700;
+}

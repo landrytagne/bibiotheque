@@ -11,6 +11,9 @@ import { UsersService } from '../_service/users.service';
 })
 export class LoginComponent implements OnInit {
 
+  errorMessage: string | null = null;
+  loading = false;
+
   constructor(private userService: UsersService,
     private userAuthSerivce: UserAuthService,
     private router: Router
@@ -20,8 +23,11 @@ export class LoginComponent implements OnInit {
   }
 
   login(loginForm: NgForm) {
+    this.errorMessage = null;
+    this.loading = true;
     this.userService.login(loginForm.value).subscribe(
       (response: any)=>{
+        this.loading = false;
         this.userAuthSerivce.setRoles(response.user.role);
         this.userAuthSerivce.setToken(response.jwtToken);
         this.userAuthSerivce.setUserId(response.user.userId);
@@ -31,11 +37,18 @@ export class LoginComponent implements OnInit {
         if(role === 'Admin') {
           this.router.navigate(['/books']);
         } else {
-          this.router.navigate(['/borrow-book']) //update later
+          this.router.navigate(['/borrow-book']);
         }
       },
       (error)=>{
-        console.log(error);
+        this.loading = false;
+        if (error.status === 401) {
+          this.errorMessage = 'Identifiants incorrects. Vérifiez votre nom d\'utilisateur et votre mot de passe.';
+        } else if (error.status === 403) {
+          this.errorMessage = 'Vous n\'avez pas accès à cette application.';
+        } else {
+          this.errorMessage = 'Le serveur est injoignable. Vérifiez que le backend est démarré, puis réessayez.';
+        }
       }
     );
   }

@@ -1,0 +1,17 @@
+.page-form {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+.form-card {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: none;
+    border-radius: 12px;
+}
+
+.form-title {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
