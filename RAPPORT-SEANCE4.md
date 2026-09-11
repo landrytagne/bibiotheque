@@ -69,6 +69,24 @@ Mots de passe hachés en BCrypt (les comptes peuvent être créés par un Admin 
 
 ## Ce qui reste à faire
 
+**Complément — parité des tests backend ↔ frontend (demande du formateur, au-delà du sujet)** :
+
+| Règle | Test backend | Miroir frontend |
+|---|---|---|
+| RG-03 (limite de 3 actives) | Unitaire, repository mocké, 2 cas | Le formulaire affiche le message 409 « RG-03… » du backend |
+| RS-01 (401 sans token) | `GET /api/reservations` sans token → 401 | `AuthGuard` sans token → `/login` ; `AuthInterceptor` : réponse 401 → `/login` |
+| RS-02 (403 action bibliothécaire) | DELETE par un ADHERENT → 403 | `AuthInterceptor` : réponse 403 → `/forbidden` ; liste : bouton Annuler masqué hors statut actif |
+| RS-03 (403 réservation d'autrui) | GET et PATCH sur celle d'un autre → 403 | Page : message du backend affiché au chargement ; alerte à l'annulation refusée |
+| RS-04 (identité du token) | Création pour un autre → 403 ; le sien est ignoré | Formulaire : corps `{livreId, adherentId}` envoyé, message 403 « RS-04… » affiché ; l'arbitrage reste côté serveur |
+| RS-05 (ses réservations seulement) | Liste filtrée au token | Page : un User appelle `getReservationsByAdherent(userId)` et ne voit pas le formulaire |
+
+Nouveaux specs : `auth.interceptor.spec.ts` (5 tests — Bearer ajouté, No-Auth ignoré, 401 → /login, 403 → /forbidden, pas de redirection pour 409), `reservation-form.component.spec.ts` (7 tests — validation, corps du POST, succès, affichage des messages RG-03/RS-04/erreur générique), `reservation-list.component.spec.ts` (9 tests — bouton Annuler selon le statut, événements, états vide/erreur), et le test d'annulation refusée (403) dans la page.
+
+```
+npx ng test --watch=false --browsers=ChromeHeadless
+Résultat : TOTAL: 75 SUCCESS — 0 échec
+```
+
 - Pousser la branche et ouvrir la Pull Request avec la capture des tests et ce tableau RS-01 → RS-05 dans la description, puis la faire relire par un pair.
 - Si fin en avance (non fait) : message personnalisé sur l'expiration du token (le 401 est déjà garanti), test sur RG-01, journalisation des accès refusés.
 - Séance 5 : fermer `POST /admin/users` et `/admin/**` (dette documentée ci-dessus).
