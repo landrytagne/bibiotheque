@@ -35,4 +35,15 @@ export class ReservationListComponent implements OnInit {
   boutonAnnulationVisible(r: Reservation): boolean {
     return (r.statut === 'EN_ATTENTE' || r.statut === 'DISPONIBLE');
   }
+
+  getStatusClass(statut: string): string {
+    switch (statut) {
+      case 'EN_ATTENTE': return 'status-pending';
+      case 'DISPONIBLE': return 'status-available';
+      case 'ANNULEE': return 'status-cancelled';
+      case 'EXPIREE': return 'status-expired';
+      case 'HONOREE': return 'status-honored';
+      default: return '';
+    }
+  }
 }

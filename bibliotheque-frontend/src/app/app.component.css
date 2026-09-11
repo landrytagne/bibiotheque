@@ -1,0 +1,14 @@
+/* ============================================
+   APP MAIN LAYOUT
+   ============================================ */
+
+.app-main {
+  padding: 24px 0 48px;
+  min-height: calc(100vh - 64px);
+}
+
+@media (max-width: 768px) {
+  .app-main {
+    padding: 16px 0 32px;
+  }
+}

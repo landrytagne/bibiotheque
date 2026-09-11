@@ -1,17 +1,115 @@
+/* ============================================
+   FORM CARD — Modern Design (Update Book)
+   ============================================ */
+
 .page-form {
-    max-width: 520px;
-    margin: 0 auto;
-    padding: 20px 0;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 24px 0;
 }
 
 .form-card {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: none;
-    border-radius: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.form-card-header {
+  padding: 32px 32px 24px;
+  text-align: center;
+  background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.form-header-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--brand-500), var(--brand-600));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin: 0 auto 16px;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.form-header-icon.icon-amber {
+  background: linear-gradient(135deg, var(--warning-500), #d97706);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
 }
 
 .form-title {
-    color: #2c3e50;
-    margin-bottom: 20px;
-    font-weight: 600;
+  color: var(--text-primary);
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.form-subtitle {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.form-card .card-body {
+  padding: 32px;
+}
+
+.input-group-custom {
+  margin-bottom: 20px;
+}
+
+.input-group-custom label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--surface-600);
+  margin-bottom: 8px;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-wrapper .input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--surface-400);
+  pointer-events: none;
+  transition: color 0.25s var(--ease-smooth);
+}
+
+.input-wrapper .form-control {
+  padding-left: 44px;
+}
+
+.input-wrapper:focus-within .input-icon {
+  color: var(--brand-500);
+}
+
+.btn-submit {
+  margin-top: 8px;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  height: 50px;
+}
+
+@media (max-width: 576px) {
+  .page-form {
+    padding: 16px 0;
+  }
+
+  .form-card-header {
+    padding: 24px 20px 20px;
+  }
+
+  .form-card .card-body {
+    padding: 24px 20px;
+  }
 }

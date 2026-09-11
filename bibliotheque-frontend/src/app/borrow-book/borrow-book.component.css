@@ -1,9 +1,64 @@
-.genre-badge {
-    background-color: #eef1fa;
-    color: #33415c;
-    font-weight: 500;
+/* ============================================
+   BORROW BOOK — Modern Table
+   ============================================ */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
 }
 
-.borrow-icon {
-    margin-right: 4px;
+.page-subtitle {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.page-title {
+  margin-bottom: 4px;
+}
+
+.id-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  background: var(--surface-100);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--surface-600);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.author-text {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.genre-badge {
+  background: var(--brand-50) !important;
+  color: var(--brand-700) !important;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+}
+
+.count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 28px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.count-available {
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
 }

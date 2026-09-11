@@ -1,30 +1,45 @@
-<h2 class="page-title">Livres à retourner</h2>
-
-<div class="card">
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table align-middle">
-                <thead>
-                    <tr>
-                        <th> ID du livre </th>
-                        <th> Date d'emprunt </th>
-                        <th> Date de retour </th>
-                        <th> Échéance </th>
-                        <th> Actions </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let b of borrow">
-                        <td> {{ b.bookId }} </td>
-                        <td> {{ b.issueDate }} </td>
-                        <td> {{ b.returnDate }} </td>
-                        <td> {{ b.dueDate }} </td>
-                        <td>
-                            <button *ngIf="b.returnDate === null" (click)="returnBook(b.borrowId)" class="btn btn-sm btn-warning">📤 Retourner</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+<div class="animate-fade-in-up">
+  <div class="page-header">
+    <div>
+      <h2 class="page-title">Livres à retourner</h2>
+      <p class="page-subtitle">{{ borrow.length }} emprunt{{ borrow.length > 1 ? 's' : '' }} en cours</p>
     </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>ID livre</th>
+              <th>Date d'emprunt</th>
+              <th>Date de retour</th>
+              <th>Échéance</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let b of borrow" class="animate-fade-in">
+              <td>
+                <span class="id-badge">#{{ b.bookId }}</span>
+              </td>
+              <td>{{ b.issueDate }}</td>
+              <td>
+                <span *ngIf="b.returnDate !== null">{{ b.returnDate }}</span>
+                <span *ngIf="b.returnDate === null" class="badge status-badge status-pending">En cours</span>
+              </td>
+              <td>{{ b.dueDate }}</td>
+              <td class="text-end">
+                <button *ngIf="b.returnDate === null" (click)="returnBook(b.borrowId)" class="btn btn-sm btn-warning">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  Retourner
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>

@@ -1,27 +1,44 @@
-<h2 class="page-title">Historique d'emprunt de {{ book.bookName }}</h2>
-
-<div class="card">
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table align-middle">
-                <thead>
-                    <tr>
-                        <th> ID utilisateur </th>
-                        <th> Date d'emprunt </th>
-                        <th> Date de retour </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let borrower of borrow">
-                        <td> {{ borrower.userId }} </td>
-                        <td> {{ borrower.issueDate }} </td>
-                        <td *ngIf="borrower.returnDate != null"> {{ borrower.returnDate }} </td>
-                        <td *ngIf="borrower.returnDate === null">
-                            <span class="badge rounded-pill not-returned">Non retourné</span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+<div class="animate-fade-in-up">
+  <div class="page-header">
+    <div>
+      <h2 class="page-title">Historique d'emprunt</h2>
+      <p class="page-subtitle">{{ book.bookName }}</p>
     </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>Utilisateur</th>
+              <th>Date d'emprunt</th>
+              <th>Date de retour</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let borrower of borrow" class="animate-fade-in">
+              <td>
+                <div class="cell-with-icon">
+                  <svg class="cell-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  <span>Utilisateur #{{ borrower.userId }}</span>
+                </div>
+              </td>
+              <td class="date-text">{{ borrower.issueDate }}</td>
+              <td>
+                <span *ngIf="borrower.returnDate != null" class="date-text">{{ borrower.returnDate }}</span>
+                <span *ngIf="borrower.returnDate === null" class="badge status-pill status-pending">Non retourné</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div *ngIf="borrow.length === 0" class="empty-state">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <p>Aucun emprunt enregistré pour ce livre</p>
+      </div>
+    </div>
+  </div>
 </div>

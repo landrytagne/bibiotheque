@@ -65,15 +65,12 @@ export class ReservationPageComponent implements OnInit {
       },
       error => {
         this.chargement = false;
-        if (error instanceof HttpErrorResponse) {
-          if (error.status === 0) {
-            this.erreurListe = 'Le serveur est injoignable. Vérifiez que le backend est démarré.';
-          } else {
-            const messageServeur = error.error && error.error.message;
-            this.erreurListe = messageServeur || 'Impossible de charger les réservations.';
-          }
+        if (error.error && error.error.message) {
+          this.erreurListe = error.error.message;
+        } else if (error.status === 0) {
+          this.erreurListe = 'Le serveur est injoignable.';
         } else {
-          this.erreurListe = 'Une erreur est survenue lors du chargement des réservations.';
+          this.erreurListe = 'Impossible de charger les réservations.';
         }
       }
     );
@@ -109,12 +106,12 @@ export class ReservationPageComponent implements OnInit {
       () => {
         this.messageSucces = 'Réservation annulée avec succès !';
         this.chargerReservations();
-        
+
         setTimeout(() => {
           this.messageSucces = null;
         }, 3000);
       },
-      (error: HttpErrorResponse) => {
+      (error) => {
         let message = 'Une erreur est survenue lors de l\'annulation.';
         if (error.error && error.error.message) {
           message = error.error.message;

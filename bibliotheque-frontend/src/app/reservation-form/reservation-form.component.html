@@ -1,33 +1,55 @@
-<div class="container">
-    <h3 class="text-center">Nouvelle réservation</h3>
+<div class="card reservation-form-card">
+  <div class="form-card-header">
+    <div class="form-header-icon icon-purple">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    </div>
+    <h3 class="form-title">Nouvelle réservation</h3>
+    <p class="form-subtitle">Réservez un livre pour un adhérent</p>
+  </div>
 
+  <div class="card-body">
     <div *ngIf="messageErreur" class="alert alert-danger" role="alert">
-        {{ messageErreur }}
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      {{ messageErreur }}
+    </div>
+
+    <div *ngIf="messageSucces" class="alert alert-success" role="alert">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      {{ messageSucces }}
     </div>
 
     <form autocomplete="off">
-        <div class="form-group">
-            <label style="margin-bottom: 10px"> Livre </label>
-            <select class="form-control" style="margin-bottom: 10px" [(ngModel)]="requete.livreId" name="livreId">
-                <option [ngValue]="null" disabled>Choisir un livre</option>
-                <option *ngFor="let livre of livres" [ngValue]="livre.bookId">
-                    {{ livre.bookName }} ({{ livre.bookAuthor }})
-                </option>
-            </select>
+      <div class="input-group-custom">
+        <label>Livre</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          <select class="form-control form-select" [(ngModel)]="requete.livreId" name="livreId">
+            <option [ngValue]="null" disabled>Choisir un livre</option>
+            <option *ngFor="let livre of livres" [ngValue]="livre.bookId">
+              {{ livre.bookName }} — {{ livre.bookAuthor }}
+            </option>
+          </select>
         </div>
+      </div>
 
-        <div class="form-group">
-            <label style="margin-bottom: 10px"> Adhérent </label>
-            <select class="form-control" style="margin-bottom: 10px" [(ngModel)]="requete.adherentId" name="adherentId">
-                <option [ngValue]="null" disabled>Choisir un adhérent</option>
-                <option *ngFor="let adherent of adherents" [ngValue]="adherent.userId">
-                    {{ adherent.name }}
-                </option>
-            </select>
+      <div class="input-group-custom">
+        <label>Adhérent</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <select class="form-control form-select" [(ngModel)]="requete.adherentId" name="adherentId">
+            <option [ngValue]="null" disabled>Choisir un adhérent</option>
+            <option *ngFor="let adherent of adherents" [ngValue]="adherent.userId">
+              {{ adherent.name }}
+            </option>
+          </select>
         </div>
+      </div>
 
-        <button class="btn btn-success" type="button" (click)="soumettre()" [disabled]="!valide() || enAttente">
-            {{ enAttente ? 'Création en cours...' : 'Réserver' }}
-        </button>
+      <button class="btn btn-success w-100 btn-submit" type="button" (click)="soumettre()" [disabled]="!valide() || enAttente">
+        <svg *ngIf="!enAttente" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span *ngIf="enAttente" class="spinner-border spinner-border-sm"></span>
+        {{ enAttente ? 'Création...' : 'Réserver' }}
+      </button>
     </form>
+  </div>
 </div>

@@ -1,25 +1,107 @@
+/* ============================================
+   USERS LIST — Modern Table
+   ============================================ */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.page-subtitle {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
 .page-title {
-    margin-bottom: 20px;
-    color: #2c3e50;
+  margin-bottom: 4px;
+}
+
+/* ID Badge */
+.id-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  background: var(--surface-100);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--surface-600);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+/* User Cell with Avatar */
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar-sm {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: white;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.avatar-admin {
+  background: linear-gradient(135deg, var(--brand-500), var(--brand-700));
+}
+
+.avatar-user {
+  background: linear-gradient(135deg, var(--accent-500), var(--accent-600));
+}
+
+.user-cell strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.username-text {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* Role Badges */
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.75rem;
 }
 
 .badge-admin {
-    background-color: #1f3a93;
-    color: #ffffff;
-    font-weight: 600;
-    padding: 6px 12px;
+  background: linear-gradient(135deg, var(--brand-50), var(--brand-100)) !important;
+  color: var(--brand-700) !important;
+  border: 1px solid var(--brand-200);
 }
 
 .badge-user {
-    background-color: #27ae60;
-    color: #ffffff;
-    font-weight: 600;
-    padding: 6px 12px;
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5) !important;
+  color: #047857 !important;
+  border: 1px solid #a7f3d0;
 }
 
-.badge-danger-light {
-    background-color: #e74c3c;
-    color: #ffffff;
-    font-weight: 600;
-    padding: 6px 12px;
+.badge-none {
+  background: #fef2f2 !important;
+  color: #b91c1c !important;
+  border: 1px solid #fecaca;
+}
+
+.text-muted-dash {
+  color: var(--text-muted);
+  font-size: 1.1rem;
 }

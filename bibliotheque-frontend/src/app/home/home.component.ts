@@ -8,9 +8,12 @@ import { UserAuthService } from '../_service/user-auth.service';
 })
 export class HomeComponent implements OnInit {
 
+  name: string | null = null;
+
   constructor(private userAuthService: UserAuthService) { }
 
   ngOnInit(): void {
+    this.name = this.userAuthService.getName();
   }
 
   isLoggedIn(): boolean {

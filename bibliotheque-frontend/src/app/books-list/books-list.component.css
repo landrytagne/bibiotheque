@@ -1,17 +1,116 @@
+/* ============================================
+   BOOKS LIST — Modern Table
+   ============================================ */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.page-subtitle {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.page-title {
+  margin-bottom: 4px;
+}
+
+/* ID Badge */
+.id-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  background: var(--surface-100);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--surface-600);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+/* Book Title Cell */
+.book-title-cell strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.author-text {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* Genre Badge */
 .genre-badge {
-    background-color: #eef1fa;
-    color: #33415c;
-    font-weight: 500;
+  background: var(--brand-50) !important;
+  color: var(--brand-700) !important;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+}
+
+/* Count Badge */
+.count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 28px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.85rem;
 }
 
 .count-available {
-    background-color: #27ae60;
-    color: #ffffff;
-    font-weight: 600;
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
 }
 
 .count-unavailable {
-    background-color: #e74c3c;
-    color: #ffffff;
-    font-weight: 600;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+/* Action Buttons */
+.action-btns {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--text-muted);
+}
+
+.empty-state svg {
+  margin-bottom: 16px;
+  opacity: 0.4;
+}
+
+.empty-state p {
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .action-btns {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .action-btns .btn {
+    width: 100%;
+    justify-content: center;
+  }
 }

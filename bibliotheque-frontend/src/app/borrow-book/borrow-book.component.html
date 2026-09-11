@@ -1,34 +1,52 @@
-<h2 class="page-title">Livres disponibles à emprunter</h2>
-
-<div class="card">
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table align-middle">
-                <thead>
-                    <tr>
-                        <th> ID </th>
-                        <th> Titre </th>
-                        <th> Auteur </th>
-                        <th> Genre </th>
-                        <th> Exemplaires </th>
-                        <th> Actions </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let book of books">
-                        <td> {{ book.bookId }} </td>
-                        <td> <strong>{{ book.bookName }}</strong> </td>
-                        <td> {{ book.bookAuthor }} </td>
-                        <td>
-                            <span class="badge rounded-pill genre-badge">{{ book.bookGenre }}</span>
-                        </td>
-                        <td> {{ book.noOfCopies }} </td>
-                        <td>
-                            <button (click)="borrowBook(book.bookId)" class="btn btn-sm btn-success"><span class="borrow-icon">📥</span> Emprunter</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+<div class="animate-fade-in-up">
+  <div class="page-header">
+    <div>
+      <h2 class="page-title">Livres disponibles à emprunter</h2>
+      <p class="page-subtitle">{{ books.length }} livre{{ books.length > 1 ? 's' : '' }} disponible{{ books.length > 1 ? 's' : '' }}</p>
     </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Titre</th>
+              <th>Auteur</th>
+              <th>Genre</th>
+              <th>Exemplaires</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let book of books" class="animate-fade-in">
+              <td>
+                <span class="id-badge">#{{ book.bookId }}</span>
+              </td>
+              <td>
+                <strong>{{ book.bookName }}</strong>
+              </td>
+              <td>
+                <span class="author-text">{{ book.bookAuthor }}</span>
+              </td>
+              <td>
+                <span class="badge genre-badge">{{ book.bookGenre }}</span>
+              </td>
+              <td>
+                <span class="count-badge count-available">{{ book.noOfCopies }}</span>
+              </td>
+              <td class="text-end">
+                <button (click)="borrowBook(book.bookId)" class="btn btn-sm btn-success">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Emprunter
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>

@@ -1,23 +1,41 @@
-<h2>Gestion des réservations</h2>
+<div class="animate-fade-in-up">
+  <div class="page-header">
+    <div>
+      <h2 class="page-title">Gestion des réservations</h2>
+      <p class="page-subtitle" *ngIf="estAdmin">Administration des réservations</p>
+      <p class="page-subtitle" *ngIf="!estAdmin">Consultez et gérez vos réservations</p>
+    </div>
+  </div>
 
-<div *ngIf="estAdmin">
-    <app-reservation-form
-        [livres]="livres"
-        [adherents]="adherents"
-        (creer)="creer($event)">
-    </app-reservation-form>
+  <div *ngIf="messageSucces" class="alert alert-success animate-fade-in" role="alert">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    {{ messageSucces }}
+  </div>
+
+  <div class="reservation-grid" *ngIf="estAdmin">
+    <div class="reservation-form-section animate-fade-in-up stagger-1">
+      <app-reservation-form
+          [livres]="livres"
+          [adherents]="adherents"
+          (reservationCreee)="chargerReservations()">
+      </app-reservation-form>
+    </div>
+  </div>
+
+  <div *ngIf="!estAdmin" class="info-banner animate-fade-in-up stagger-1">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+    <span>Vous consultez vos réservations personnelles.</span>
+  </div>
+
+  <div class="animate-fade-in-up stagger-2">
+    <app-reservation-list
+        [reservations]="reservations"
+        [chargement]="chargement"
+        [erreur]="erreurListe"
+        [statutSelectionne]="statutSelectionne"
+        (filtrer)="filtrer($event)"
+        (annuler)="annuler($event)"
+        (reessayer)="reessayer()">
+    </app-reservation-list>
+  </div>
 </div>
-
-<div *ngIf="!estAdmin" class="alert alert-info" role="alert">
-    Vous consultez vos réservations.
-</div>
-
-<app-reservation-list
-    [reservations]="reservations"
-    [chargement]="chargement"
-    [erreur]="erreurListe"
-    [statutSelectionne]="statutSelectionne"
-    (filtrer)="filtrer($event)"
-    (annuler)="annuler($event)"
-    (reessayer)="reessayer()">
-</app-reservation-list>

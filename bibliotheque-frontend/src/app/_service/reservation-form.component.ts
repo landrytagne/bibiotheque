@@ -34,31 +34,34 @@ export class ReservationFormComponent implements OnInit {
       this.messageErreur = 'Veuillez sélectionner un livre et un adhérent.';
       return;
     }
-    
+
     this.messageErreur = null;
     this.messageSucces = null;
     this.enAttente = true;
-    
-    this.reservationService.creerReservation(this.requete).subscribe({
-      next: (reservation: any) => {
+
+    this.reservationService.creerReservation(this.requete).subscribe(
+      (reservation) => {
         this.enAttente = false;
         this.messageSucces = 'Réservation créée avec succès !';
         this.reservationCreee.emit();
         this.requete = new ReservationRequest();
-        
+
         setTimeout(() => {
           this.messageSucces = null;
         }, 3000);
       },
-      error: (error: any) => {
+      (error) => {
         this.enAttente = false;
-        
+
+        console.log('Erreur brute:', error);
+        console.log('error.error:', error.error);
+
         if (error.error && error.error.message) {
           this.messageErreur = error.error.message;
         } else {
           this.messageErreur = 'Une erreur est survenue.';
         }
       }
-    });
+    );
   }
 }
