@@ -40,6 +40,24 @@ sh mvnw test        # ou ./mvnw test si le wrapper est exécutable
 Résultat : `Tests run: 13, Failures: 0, Errors: 0, Skipped: 0 — BUILD SUCCESS`
 (1 contexte Spring + 10 tests d'intégration `ReservationSecurityIntegrationTest` + 2 tests unitaires `ReservationServiceRg03Test`), sans aucune base externe ni Docker.
 
+## Tests frontend (Angular 17 / Karma)
+
+Le module Réservation n'avait **aucun test** côté client, et la suite Angular était morte depuis le départ : `src/test.ts` utilisait `require.context()` (style Angular ≤ 15), supprimé par le builder de test d'Angular 17 — `ng test` exécutait « 0 of 0 ERROR », aucun des 24 specs existants ne tournait.
+
+**Réparation de l'infrastructure :** suppression de `src/test.ts` et de sa référence dans `angular.json` / `tsconfig.spec.json` (les specs sont découverts automatiquement).
+
+**Nouveaux specs Réservation :**
+
+- `reservation.service.spec.ts` (6 tests) : unitaire avec `HttpClientTestingModule` — URL, méthode et corps des 5 appels (liste, filtre statut, filtre adhérent, création POST, annulation PATCH).
+- `reservation-page.component.spec.ts` (8 tests) : intégration avec services espionnés — un User appelle `getReservationsByAdherent(userId)` et ne voit pas le formulaire (miroir de RS-05) ; un Admin appelle `getReservations()` et voit le formulaire ; filtre par statut ; erreurs 403 (message du backend) et serveur injoignable affichées ; annulation avec confirmation, et absence d'appel si refusée.
+
+**Réparation de la suite existante :** les 20 specs en échec (générés par la CLI, jamais entretenus) sont corrigés — `HttpClientTestingModule` sur les services, espions et `ActivatedRoute` factice sur les composants, `FormsModule` là où les templates utilisent `ngModel`, tests `AppComponent` obsolètes remplacés, spec `AuthGuard` réécrit (sans token → /login, rôle insuffisant → /forbidden, rôle requis → passage).
+
+```
+npx ng test --watch=false --browsers=ChromeHeadless
+Résultat : TOTAL: 53 SUCCESS — 0 échec
+```
+
 ## Comptes pour la démo (à créer en base avant le passage)
 
 Créer deux ADHERENT distincts et un BIBLIOTHECAIRE, chacun avec au moins une réservation à son nom :
