@@ -40,6 +40,16 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Identité non établissable (token absent, illisible, expiré, utilisateur
+     * disparu) : 401, conformément à la distinction 401/403 du sujet.
+     */
+    @ExceptionHandler(AuthentificationRequiseException.class)
+    public ResponseEntity<Map<String, String>> gererAuthentificationRequise(AuthentificationRequiseException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Collections.singletonMap("message", ex.getMessage()));
+    }
+
+    /**
      * Refus levé par @PreAuthorize (method security) : 401 si l'appelant est
      * anonyme, 403 s'il est authentifié sans les droits requis.
      */

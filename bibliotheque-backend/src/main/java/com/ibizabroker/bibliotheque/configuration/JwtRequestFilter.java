@@ -3,10 +3,13 @@ package com.ibizabroker.bibliotheque.configuration;
 import com.ibizabroker.bibliotheque.service.JwtService;
 import com.ibizabroker.bibliotheque.util.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -19,6 +22,8 @@ import java.io.IOException;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtRequestFilter.class);
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -39,17 +44,29 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             try {
                 username = jwtUtil.getUsernameFromToken(jwtToken);
             } catch (IllegalArgumentException e) {
-                System.out.println("Unable to get JWT Token");
+                LOGGER.warn("JWT illisible (token malformé) : {}", e.getMessage());
             } catch (ExpiredJwtException e) {
-                System.out.println("JWT Token has expired");
+                // Token expiré : l'identité ne peut plus être établie, la requête
+                // restera anonyme et l'entry point répondra 401.
+                LOGGER.warn("JWT expiré : {}", e.getMessage());
             }
         } else {
-            System.out.println("JWT token does not start with Bearer");
+            LOGGER.warn("En-tête Authorization absent ou sans préfixe Bearer pour {}", request.getRequestURI());
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails = jwtService.loadUserByUsername(username);
+            UserDetails userDetails;
+            try {
+                userDetails = jwtService.loadUserByUsername(username);
+            } catch (UsernameNotFoundException e) {
+                // L'utilisateur du token n'existe plus : on n'instaure aucune
+                // identité et la requête reste anonyme → 401 par l'entry point
+                // (et non 403 : « je ne sais pas qui vous êtes »).
+                LOGGER.warn("Utilisateur du JWT introuvable : {}", e.getMessage());
+                filterChain.doFilter(request, response);
+                return;
+            }
 
             if (jwtUtil.validateToken(jwtToken, userDetails)) {
 

@@ -3,6 +3,7 @@ package com.ibizabroker.bibliotheque.service;
 import com.ibizabroker.bibliotheque.dao.UsersRepository;
 import com.ibizabroker.bibliotheque.entity.Users;
 import com.ibizabroker.bibliotheque.exceptions.AccesRefuseException;
+import com.ibizabroker.bibliotheque.exceptions.AuthentificationRequiseException;
 import com.ibizabroker.bibliotheque.exceptions.ChampManquantException;
 import com.ibizabroker.bibliotheque.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,16 +30,19 @@ public class SecurityService {
 
     /**
      * L'utilisateur authentifié porté par le token ; lève une erreur s'il n'y en a pas.
+     * Si l'utilisateur du token a disparu de la base, l'identité ne peut pas être
+     * établie : 401 (AuthentificationRequiseException), et non 403 — « je ne sais
+     * pas qui vous êtes », conformément à la distinction 401/403 du sujet.
      */
     public Users utilisateurCourant() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()
                 || !(authentication.getPrincipal() instanceof UserDetails)) {
-            throw new AccesRefuseException("Authentification requise.");
+            throw new AuthentificationRequiseException("Authentification requise.");
         }
         String username = ((UserDetails) authentication.getPrincipal()).getUsername();
         return usersRepository.findByUsername(username)
-                .orElseThrow(() -> new AccesRefuseException("Utilisateur du token introuvable."));
+                .orElseThrow(() -> new AuthentificationRequiseException("Utilisateur du token introuvable."));
     }
 
     public boolean estBibliothecaire(Users user) {

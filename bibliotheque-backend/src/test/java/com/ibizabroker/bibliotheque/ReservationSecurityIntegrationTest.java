@@ -181,6 +181,25 @@ class ReservationSecurityIntegrationTest {
     }
 
     @Test
+    @DisplayName("401/403 : un token encore valide d'un utilisateur disparu de la base renvoie 401, pas 500 ni 403")
+    void lister_avecTokenUtilisateurDisparu_renvoie401() {
+        String token = tokenDe("adherent.un");
+
+        // l'utilisateur du token disparaît (son username n'existe plus au moment de l'appel)
+        transactionTemplate.executeWithoutResult(status -> {
+            Users adherent = usersRepository.findById(adherent1Id).orElseThrow();
+            adherent.setUsername("adherent.disparu");
+            usersRepository.save(adherent);
+        });
+
+        ResponseEntity<String> reponse = restTemplate.exchange(url("/api/reservations"),
+                HttpMethod.GET, new HttpEntity<>(entetesAvecToken(token)), String.class);
+
+        // « Je ne sais pas qui vous êtes » → 401, conformément à la distinction du sujet
+        assertThat(reponse.getStatusCode().value()).isEqualTo(401);
+    }
+
+    @Test
     @DisplayName("RS-05 : GET /api/reservations avec un token ADHERENT renvoie 200 et ses réservations seulement")
     void lister_avecTokenAdherent_renvoie200etSesReservationsSeulement() {
         String token = tokenDe("adherent.un");

@@ -11,7 +11,7 @@
 
 **Pourquoi :** un adhérent malveillant peut écrire n'importe quel `adherentId` dans le corps de la requête — c'est le point que le sujet marque comme le plus important (RS-04). En déduisant l'identité du token, il ne peut réserver qu'à son nom ; le bibliothécaire, lui, choisit librement l'adhérent. Réutiliser les deux niveaux de sécurité déjà en place évite une nouvelle abstraction ; le H2 en mémoire permet de lancer `mvn test` partout, sans Docker ni base, donc de faire la démo devant le formateur sans préparation d'environnement.
 
-**Ce que j'ai écarté :** créer les rôles `ADHERENT`/`BIBLIOTHECAIRE` en base avec une migration Flyway V2. Littéralement conforme au sujet, mais ça cassait le routage Angular (`data: {roles: ['Admin']}`), le `roleMatch(['Admin'])` du front, tous les comptes existants et l'écran de réservations — pour un bénéfice purement cosmétique. J'ai écarté aussi le `@WebMvcTest` (le service mocké aurait fait des 403 « prouvés » contre un mock, donc rien) et les override silencieux du `adherentId` étranger (la matrice du sujet exige un refus : un bibliothécaire qui s'autocorre en silence masquerait l'attaque).
+**Ce que j'ai écarté :** créer les rôles `ADHERENT`/`BIBLIOTHECAIRE` en base avec une migration Flyway V2. Littéralement conforme au sujet, mais ça cassait le routage Angular (`data: {roles: ['Admin']}`), le `roleMatch(['Admin'])` du front, tous les comptes existants et l'écran de réservations — pour un bénéfice purement cosmétique. J'ai écarté aussi le `@WebMvcTest` (le service mocké aurait fait des 403 « prouvés » contre un mock, donc rien) et les override silencieux du `adherentId` étranger (la matrice du sujet exige un refus : un bibliothécaire qui s'autocorre en silence masquerait l'attaque). J'ai laissé `POST /admin/users` ouvert (permitAll, `@PreAuthorize` en commentaire) : hors périmètre de la séance, et le fermer maintenant empêcherait de créer les comptes de démo sur une base vierge — dette connue à traiter en séance 5.
 
 **Le coût que j'accepte :** le code parle d'« Admin » et de « User » là où le sujet dit « BIBLIOTHECAIRE » et « ADHERENT » — la correspondance est documentée dans `SecurityService` mais reste une convention à connaître. Les tests d'intégration tournent sur H2 et non sur PostgreSQL ; la compatibilité du SQL réel n'est donc pas prouvée par la suite (aucun SQL spécifique écrit ici, risque faible). Ajouter deux dépendances de test (`h2`, `httpclient`) au `pom.xml`, validé avant implémentation.
 
@@ -23,7 +23,7 @@
 
 | Réf. | Règle | Implémentation | Preuve par test |
 |---|---|---|---|
-| RS-01 | 401 sans token sur tout endpoint de réservation | `WebSecurityConfiguration` : `/api/reservations/**` passe de `permitAll()` à `authenticated()` ; 401 émis par `JwtAuthenticationEntryPoint` existant. Bonus : les refus `@PreAuthorize` d'un anonyme sont traduits en 401 dans `GlobalExceptionHandler`. | `lister_sansToken_renvoie401` |
+| RS-01 | 401 sans token sur tout endpoint de réservation | `WebSecurityConfiguration` : `/api/reservations/**` passe de `permitAll()` à `authenticated()` ; 401 émis par `JwtAuthenticationEntryPoint` existant. Bonus : les refus `@PreAuthorize` d'un anonyme sont traduits en 401 dans `GlobalExceptionHandler`. Durcissement 401/403 : un token signé d'un utilisateur disparu de la base ne peut plus donner de 403 — le filtre n'instaure aucune identité (`UsernameNotFoundException` intercepté) et `SecurityService` lève `AuthentificationRequiseException` (401), car « je ne sais pas qui vous êtes ». | `lister_sansToken_renvoie401`, `lister_avecTokenUtilisateurDisparu_renvoie401` |
 | RS-02 | 403 pour un ADHERENT sur une action de bibliothécaire | `@PreAuthorize("hasRole('Admin')")` sur `DELETE /api/reservations/{id}` ; 403 JSON via `GlobalExceptionHandler`. | `supprimer_avecTokenAdherent_renvoie403` |
 | RS-03 | 403 sur la réservation d'un autre | `ReservationService.verifierAppartenance` appelé par `consulter` et `annuler` ; lève `AccesRefuseException` → 403 JSON. | `consulter_reservationDAutre_renvoie403`, `annuler_reservationDAutre_renvoie403` |
 | RS-04 | Identité du token, pas du corps | `SecurityService.adherentAutorise` : l'ADHERENT est pris du token (403 si le corps désigne un autre) ; le `adherentId` n'est utilisé que par le BIBLIOTHECAIRE. | `creer_pourUnAutreAdherent_renvoie403`, `creer_avecPropreAdherentId_creePourLeToken` |
@@ -37,8 +37,8 @@ cd bibliotheque-backend
 sh mvnw test        # ou ./mvnw test si le wrapper est exécutable
 ```
 
-Résultat : `Tests run: 12, Failures: 0, Errors: 0, Skipped: 0 — BUILD SUCCESS`
-(1 contexte Spring + 9 tests d'intégration `ReservationSecurityIntegrationTest` + 2 tests unitaires `ReservationServiceRg03Test`), sans aucune base externe ni Docker.
+Résultat : `Tests run: 13, Failures: 0, Errors: 0, Skipped: 0 — BUILD SUCCESS`
+(1 contexte Spring + 10 tests d'intégration `ReservationSecurityIntegrationTest` + 2 tests unitaires `ReservationServiceRg03Test`), sans aucune base externe ni Docker.
 
 ## Comptes pour la démo (à créer en base avant le passage)
 
@@ -52,4 +52,5 @@ Mots de passe hachés en BCrypt (les comptes peuvent être créés par un Admin 
 ## Ce qui reste à faire
 
 - Pousser la branche et ouvrir la Pull Request avec la capture des tests et ce tableau RS-01 → RS-05 dans la description, puis la faire relire par un pair.
-- Si fin en avance (non fait) : expiration du token et message associé, test sur RG-01, journalisation des accès refusés.
+- Si fin en avance (non fait) : message personnalisé sur l'expiration du token (le 401 est déjà garanti), test sur RG-01, journalisation des accès refusés.
+- Séance 5 : fermer `POST /admin/users` et `/admin/**` (dette documentée ci-dessus).
