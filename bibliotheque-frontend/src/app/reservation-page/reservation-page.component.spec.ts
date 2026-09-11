@@ -139,6 +139,19 @@ describe('ReservationPageComponent', () => {
     expect(component.messageSucces).toBe('Réservation annulée avec succès !');
   });
 
+  it("provoque une alerte avec le message du backend quand l'annulation est refusée (403)", () => {
+    reservationServiceSpy.getReservationsByAdherent.and.returnValue(of([]));
+    reservationServiceSpy.annulerReservation.and.returnValue(throwError(() =>
+      new HttpErrorResponse({ status: 403, error: { message: 'Cette réservation ne vous appartient pas.' } })));
+    spyOn(window, 'confirm').and.returnValue(true);
+    spyOn(window, 'alert');
+
+    fixture.detectChanges();
+    component.annuler(1);
+
+    expect(window.alert).toHaveBeenCalledWith('Cette réservation ne vous appartient pas.');
+  });
+
   it('ne fait rien si la confirmation est refusée', () => {
     reservationServiceSpy.getReservationsByAdherent.and.returnValue(of([]));
     spyOn(window, 'confirm').and.returnValue(false);
