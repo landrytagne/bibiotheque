@@ -9,6 +9,7 @@ import com.ibizabroker.bibliotheque.entity.Books;
 import com.ibizabroker.bibliotheque.entity.Reservation;
 import com.ibizabroker.bibliotheque.entity.StatutReservation;
 import com.ibizabroker.bibliotheque.entity.Users;
+import com.ibizabroker.bibliotheque.exceptions.AccesRefuseException;
 import com.ibizabroker.bibliotheque.exceptions.ChampManquantException;
 import com.ibizabroker.bibliotheque.exceptions.NotFoundException;
 import com.ibizabroker.bibliotheque.exceptions.RegleGestionException;
@@ -36,13 +37,13 @@ public class ReservationService {
     @Autowired
     private UsersRepository usersRepository;
 
+    @Autowired
+    private SecurityService securityService;
+
     public ReservationResponseDto creer(ReservationRequestDto requete) {
         List<String> champsManquants = new ArrayList<>();
         if (requete.getLivreId() == null) {
             champsManquants.add("livreId");
-        }
-        if (requete.getAdherentId() == null) {
-            champsManquants.add("adherentId");
         }
         if (!champsManquants.isEmpty()) {
             throw new ChampManquantException("Champ(s) manquant(s) : " + String.join(", ", champsManquants));
@@ -50,8 +51,8 @@ public class ReservationService {
 
         Books livre = booksRepository.findById(requete.getLivreId())
                 .orElseThrow(() -> new NotFoundException("Livre avec l'id " + requete.getLivreId() + " introuvable."));
-        Users adherent = usersRepository.findById(requete.getAdherentId())
-                .orElseThrow(() -> new NotFoundException("Adhérent avec l'id " + requete.getAdherentId() + " introuvable."));
+        // RS-04 : l'adhérent est déterminé par le token, pas par le corps de la requête.
+        Users adherent = securityService.adherentAutorise(requete.getAdherentId());
 
         if (livre.getNoOfCopies() >= 1) {
             throw new RegleGestionException("RG-01 : le livre \"" + livre.getBookName()
@@ -82,26 +83,48 @@ public class ReservationService {
         return versDto(reservationRepository.save(reservation));
     }
 
-    public List<ReservationResponseDto> lister(StatutReservation statut, Integer adherentId) {
+    public List<ReservationResponseDto> lister(StatutReservation statut, Integer adherentId, String username) {
+        Users utilisateur = usersRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Utilisateur " + username + " introuvable."));
+
         List<Reservation> reservations;
-        if (statut != null && adherentId != null) {
-            reservations = reservationRepository.findByAdherentUserIdAndStatut(adherentId, statut);
-        } else if (statut != null) {
-            reservations = reservationRepository.findByStatut(statut);
-        } else if (adherentId != null) {
-            reservations = reservationRepository.findByAdherentUserId(adherentId);
+        if (securityService.estBibliothecaire(utilisateur)) {
+            reservations = listerPourBibliothecaire(statut, adherentId);
         } else {
-            reservations = reservationRepository.findAll();
+            // RS-05 : un adhérent ne voit que ses propres réservations,
+            // quel que soit le paramètre adherentId envoyé.
+            reservations = listerPourAdherent(statut, utilisateur.getUserId());
         }
         return reservations.stream().map(this::versDto).collect(Collectors.toList());
     }
 
-    public ReservationResponseDto consulter(Integer id) {
-        return versDto(trouverOuLever(id));
+    private List<Reservation> listerPourBibliothecaire(StatutReservation statut, Integer adherentId) {
+        if (statut != null && adherentId != null) {
+            return reservationRepository.findByAdherentUserIdAndStatut(adherentId, statut);
+        } else if (statut != null) {
+            return reservationRepository.findByStatut(statut);
+        } else if (adherentId != null) {
+            return reservationRepository.findByAdherentUserId(adherentId);
+        }
+        return reservationRepository.findAll();
     }
 
-    public ReservationResponseDto annuler(Integer id) {
+    private List<Reservation> listerPourAdherent(StatutReservation statut, Integer adherentId) {
+        if (statut != null) {
+            return reservationRepository.findByAdherentUserIdAndStatut(adherentId, statut);
+        }
+        return reservationRepository.findByAdherentUserId(adherentId);
+    }
+
+    public ReservationResponseDto consulter(Integer id, String username) {
         Reservation reservation = trouverOuLever(id);
+        verifierAppartenance(reservation, username);
+        return versDto(reservation);
+    }
+
+    public ReservationResponseDto annuler(Integer id, String username) {
+        Reservation reservation = trouverOuLever(id);
+        verifierAppartenance(reservation, username);
 
         if (reservation.getStatut() == StatutReservation.ANNULEE) {
             throw new RegleGestionException("RG-06 : la réservation est déjà annulée et ne peut plus changer d'état.");
@@ -118,6 +141,19 @@ public class ReservationService {
     public void supprimer(Integer id) {
         Reservation reservation = trouverOuLever(id);
         reservationRepository.delete(reservation);
+    }
+
+    /**
+     * RS-03 : un adhérent n'accède qu'à ses propres réservations ; un
+     * bibliothécaire accède à toutes.
+     */
+    private void verifierAppartenance(Reservation reservation, String username) {
+        Users utilisateur = usersRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Utilisateur " + username + " introuvable."));
+        if (!securityService.estBibliothecaire(utilisateur)
+                && !reservation.getAdherent().getUserId().equals(utilisateur.getUserId())) {
+            throw new AccesRefuseException("Cette réservation ne vous appartient pas.");
+        }
     }
 
     private Reservation trouverOuLever(Integer id) {
